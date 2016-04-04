@@ -76,7 +76,7 @@ class BMPComponent(JNTComponent):
         uuid="addr"
         self.values[uuid] = self.value_factory['config_integer'](options=self.options, uuid=uuid,
             node_uuid=self.uuid,
-            help='The I2C address of the BNO component',
+            help='The I2C address of the BMP component',
             label='Addr',
             default=0x77,
         )

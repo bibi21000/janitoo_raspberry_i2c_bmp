@@ -54,14 +54,6 @@ def data_files_config(res, rsrc, src, pattern):
 data_files = []
 data_files_config(data_files, 'docs','src/docs/','*')
 
-#You must define a variable like the one below.
-#It will be used to collect entries without installing the package
-janitoo_entry_points = {
-    "janitoo.components": [
-        "rpii2c.bmp = janitoo_raspberry_i2c_bmp.bmp:make_bmp",
-    ],
-}
-
 setup(
     name = 'janitoo_raspberry_i2c_bmp',
     description = "A server which handle many controller (hardware, onewire, i2c, ...) dedicated to the raspberry",
@@ -106,5 +98,9 @@ setup(
       'https://github.com/adafruit/Adafruit_Python_GPIO/archive/master.zip#egg=Adafruit-GPIO',
       'https://github.com/adafruit/Adafruit_Python_BMP/archive/master.zip#egg=Adafruit_BMP',
     ],
-    entry_points = janitoo_entry_points,
+    entry_points = {
+    "janitoo.components": [
+        "rpii2c.bmp = janitoo_raspberry_i2c_bmp.bmp:make_bmp",
+    ],
+},
 )
