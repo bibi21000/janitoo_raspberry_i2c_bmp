@@ -66,14 +66,6 @@ class BMPComponent(JNTComponent):
         """
         oid = kwargs.pop('oid', 'rpii2c.bmp')
         name = kwargs.pop('name', "Input")
-        # Default constructor will pick a default I2C bus.
-        #
-        # For the Raspberry Pi this means you should hook up to the only exposed I2C bus
-        # from the main GPIO header and the library will figure out the bus number based
-        # on the Pi's revision.
-        #
-        # For the Beaglebone Black the library will assume bus 1 by default, which is
-        # exposed with SCL = P9_19 and SDA = P9_20.
         product_name = kwargs.pop('product_name', "BMP")
         product_type = kwargs.pop('product_type', "Temperature/altitude/pressure sensor")
         product_manufacturer = kwargs.pop('product_manufacturer', "Janitoo")
@@ -81,6 +73,13 @@ class BMPComponent(JNTComponent):
                 product_name=product_name, product_type=product_type, product_manufacturer="Janitoo", **kwargs)
         logger.debug("[%s] - __init__ node uuid:%s", self.__class__.__name__, self.uuid)
 
+        uuid="addr"
+        self.values[uuid] = self.value_factory['config_integer'](options=self.options, uuid=uuid,
+            node_uuid=self.uuid,
+            help='The I2C address of the BNO component',
+            label='Addr',
+            default=0x77,
+        )
         uuid="temperature"
         self.values[uuid] = self.value_factory['sensor_temperature'](options=self.options, uuid=uuid,
             node_uuid=self.uuid,
@@ -123,39 +122,51 @@ class BMPComponent(JNTComponent):
         self.sensor = None
 
     def temperature(self, node_uuid, index):
+        self._bus.i2c_acquire()
         try:
             data = self.sensor.read_temperature()
             ret = float(data)
         except:
-            logger.exception('Exception when retrieving temperature')
+            logger.exception('[%s] - Exception when retrieving temperature', self.__class__.__name__)
             ret = None
+        finally:
+            self._bus.i2c_release()
         return ret
 
     def altitude(self, node_uuid, index):
+        self._bus.i2c_acquire()
         try:
             data = self.sensor.read_altitude()
             ret = float(data)
         except:
-            logger.exception('Exception when retrieving altitude')
+            logger.exception('[%s] - Exception when retrieving altitude', self.__class__.__name__)
             ret = None
+        finally:
+            self._bus.i2c_release()
         return ret
 
     def pressure(self, node_uuid, index):
+        self._bus.i2c_acquire()
         try:
             data = self.sensor.read_pressure()
             ret = float(data)
         except:
-            logger.exception('Exception when retrieving pressure')
+            logger.exception('[%s] - Exception when retrieving pressure', self.__class__.__name__)
             ret = None
+        finally:
+            self._bus.i2c_release()
         return ret
 
     def sealevel_pressure(self, node_uuid, index):
+        self._bus.i2c_acquire()
         try:
             data = self.sensor.read_sealevel_pressure()
             ret = float(data)
         except:
-            logger.exception('Exception when retrieving sealevel_pressure')
+            logger.exception('[%s] - Exception when retrieving sealevel_pressure', self.__class__.__name__)
             ret = None
+        finally:
+            self._bus.i2c_release()
         return ret
 
     def check_heartbeat(self):
@@ -170,10 +181,13 @@ class BMPComponent(JNTComponent):
         """Start the bus
         """
         JNTComponent.start(self, mqttc, trigger_thread_reload_cb)
+        self._bus.i2c_acquire()
         try:
-            self.sensor = BMP085.BMP085()
+            self.sensor = BMP085.BMP085(mode=self.values["mode"].data, address=self.values["addr"].data, i2c=self._bus._ada_i2c)
         except:
-            logger.exception("Can't start component")
+            logger.exception("[%s] - Can't start component", self.__class__.__name__)
+        finally:
+            self._bus.i2c_release()
 
     def stop(self):
         """
