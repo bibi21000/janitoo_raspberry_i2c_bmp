@@ -80,6 +80,13 @@ class BMPComponent(JNTComponent):
             label='Addr',
             default=0x77,
         )
+        uuid="mode"
+        self.values[uuid] = self.value_factory['config_integer'](options=self.options, uuid=uuid,
+            node_uuid=self.uuid,
+            help='The operating mode of the BMP component (ULTRALOWPOWER=0, STANDARD=1, HIGHRES=2, ULTRAHIGHRES=3)',
+            label='Mode',
+            default=1,
+        )
         uuid="temperature"
         self.values[uuid] = self.value_factory['sensor_temperature'](options=self.options, uuid=uuid,
             node_uuid=self.uuid,
@@ -177,10 +184,10 @@ class BMPComponent(JNTComponent):
             return False
         return self.values['temperature'].data is not None
 
-    def start(self, mqttc, trigger_thread_reload_cb=None):
+    def start(self, mqttc):
         """Start the bus
         """
-        JNTComponent.start(self, mqttc, trigger_thread_reload_cb)
+        JNTComponent.start(self, mqttc)
         self._bus.i2c_acquire()
         try:
             self.sensor = BMP085.BMP085(mode=self.values["mode"].data, address=self.values["addr"].data, i2c=self._bus._ada_i2c)
