@@ -1,0 +1,13 @@
+janitoo_raspberry_i2c_bmp package
+=================================
+
+Show janitoo's extensions.
+
+Core extensions
+---------------
+
+Components
+^^^^^^^^^^
+
+ - rpii2c.bmp (janitoo_raspberry_i2c_bmp.bmp:make_bmp)
+
