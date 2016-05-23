@@ -132,7 +132,7 @@ class BMPComponent(JNTComponent):
         try:
             data = self.sensor.read_temperature()
             ret = float(data)
-        except:
+        except Exception:
             logger.exception('[%s] - Exception when retrieving temperature', self.__class__.__name__)
             ret = None
         finally:
@@ -144,7 +144,7 @@ class BMPComponent(JNTComponent):
         try:
             data = self.sensor.read_altitude()
             ret = float(data)
-        except:
+        except Exception:
             logger.exception('[%s] - Exception when retrieving altitude', self.__class__.__name__)
             ret = None
         finally:
@@ -156,7 +156,7 @@ class BMPComponent(JNTComponent):
         try:
             data = self.sensor.read_pressure()
             ret = float(data)
-        except:
+        except Exception:
             logger.exception('[%s] - Exception when retrieving pressure', self.__class__.__name__)
             ret = None
         finally:
@@ -168,7 +168,7 @@ class BMPComponent(JNTComponent):
         try:
             data = self.sensor.read_sealevel_pressure()
             ret = float(data)
-        except:
+        except Exception:
             logger.exception('[%s] - Exception when retrieving sealevel_pressure', self.__class__.__name__)
             ret = None
         finally:
@@ -188,7 +188,7 @@ class BMPComponent(JNTComponent):
         self._bus.i2c_acquire()
         try:
             self.sensor = BMP085.BMP085(mode=self.values["mode"].data, address=self.values["addr"].data, i2c=self._bus._ada_i2c)
-        except:
+        except Exception:
             logger.exception("[%s] - Can't start component", self.__class__.__name__)
         finally:
             self._bus.i2c_release()
