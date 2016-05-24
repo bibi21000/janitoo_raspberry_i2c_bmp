@@ -58,13 +58,15 @@ assert(COMMAND_DESC[COMMAND_DOC_RESOURCE] == 'COMMAND_DOC_RESOURCE')
 def make_bmp(**kwargs):
     return BMPComponent(**kwargs)
 
+from janitoo_raspberry_i2c import OID
+
 class BMPComponent(JNTComponent):
     """ A generic component for gpio """
 
     def __init__(self, bus=None, addr=None, **kwargs):
         """
         """
-        oid = kwargs.pop('oid', 'rpii2c.bmp')
+        oid = kwargs.pop('oid', '%s.bmp'%OID)
         name = kwargs.pop('name', "Input")
         product_name = kwargs.pop('product_name', "BMP")
         product_type = kwargs.pop('product_type', "Temperature/altitude/pressure sensor")
