@@ -189,7 +189,7 @@ class BMPComponent(JNTComponent):
         JNTComponent.start(self, mqttc)
         self._bus.i2c_acquire()
         try:
-            self.sensor = BMP085.BMP085(mode=self.values["mode"].data, address=self.values["addr"].data, i2c=self._bus._ada_i2c)
+            self.sensor = BMP085.BMP085(mode=self.values["mode"].data, address=self.values["addr"].data, i2c=self._bus._ada_i2c, busnum=self._bus.get_busnum())
         except Exception:
             logger.exception("[%s] - Can't start component", self.__class__.__name__)
         finally:
