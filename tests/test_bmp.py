@@ -51,3 +51,35 @@ class TestBMPComponent(JNTTComponent, JNTTComponentCommon):
     """
     component_name = "rpii2c.bmp"
 
+class TestBMPThread(JNTTThreadRun, JNTTThreadRunCommon):
+    """Test the datarrd thread
+    """
+    thread_name = "rpii2c"
+    conf_file = "tests/data/janitoo_raspberry_i2c_bmp.conf"
+
+    def test_101_check_values(self):
+        self.skipRasperryTest()
+        self.wait_for_nodeman()
+        time.sleep(5)
+        self.assertValueOnBus('bmp1','temperature')
+        self.assertValueOnBus('bmp1','altitude')
+        self.assertValueOnBus('bmp1','pressure')
+        self.assertValueOnBus('bmp1','sealevel_pressure')
+
+    def test_102_get_values(self):
+        self.onlyRasperryTest()
+        self.wait_for_nodeman()
+        time.sleep(5)
+        temperature = self.thread.bus.nodeman.find_value('bmp1','temperature').data
+        print(temperature)
+        altitude = self.thread.bus.nodeman.find_value('bmp1','altitude').data
+        print(altitude)
+        pressure = self.thread.bus.nodeman.find_value('bmp1','pressure').data
+        print(pressure)
+        sealevel_pressure = self.thread.bus.nodeman.find_value('bmp1','sealevel_pressure').data
+        print(sealevel_pressure)
+        self.assertNotEqual(temperature, None)
+        self.assertNotEqual(altitude, None)
+        self.assertNotEqual(pressure, None)
+        self.assertNotEqual(sealevel_pressure, None)
+        self.assertNotInLogfile('^ERROR ')
